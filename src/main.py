@@ -146,11 +146,50 @@ class AutomacaoSantanderBenner:
                 By.XPATH,
                 '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL"]/div[1]/div[3]/div/span/div/span[1]/span[1]/span',
             ).click()
+
             text_key = self.driver.find_element(
                 By.XPATH, '//*[@id="ctl00_Body"]/span/span/span[1]/input'
             )
             text_key.send_keys(str(row["Eventos"]))
+
             opt = self.driver.find_element(
                 By.XPATH,
                 '//*[@id="select2-ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_ctl12_ctl01_select-results"]/li[2]',
             ).click()
+
+            # Data
+            data_key = self.driver.find_element(
+                By.XPATH,
+                '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_DATAPEDIDO_DATE"]',
+            )
+            data_key.send_keys(str(row["Data Evento"]))
+
+            # Pedido
+            pedido_key = self.driver.find_element(
+                By.XPATH,
+                '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_VALORPEDIDO"]',
+            )
+            pedido_key.send_keys(str(row["Pedidos"]))
+
+            # Riscos
+            self.driver.find_element(
+                By.XPATH,
+                '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL"]/div[4]/div/div/div[11]/div/span/div/span[1]/span[1]/span',
+            ).click()
+            
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        '//*[@id="select2-ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_ctl146_ctl01_select-results"]/li[3]',
+                    )
+                )
+            ).click()
+            
+            time.sleep(3)
+            
+            # Botão Salvar
+            self.driver.execute_script("javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOS_FORM','Save')")
+            
+            # expandir decisões
+            self.driver.execute_script("javascript:;")
