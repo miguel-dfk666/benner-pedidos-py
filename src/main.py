@@ -16,6 +16,7 @@ import time
 import pyautogui
 import os
 import numpy as np
+import re
 
 
 # iniciar webdriver
@@ -176,7 +177,7 @@ class AutomacaoSantanderBenner:
                 By.XPATH,
                 '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL"]/div[4]/div/div/div[11]/div/span/div/span[1]/span[1]/span',
             ).click()
-            
+
             WebDriverWait(self.driver, 30).until(
                 EC.presence_of_element_located(
                     (
@@ -184,19 +185,72 @@ class AutomacaoSantanderBenner:
                         '//*[@id="select2-ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_ctl146_ctl01_select-results"]/li[3]',
                     )
                 )
-            ).click() 
-            
+            ).click()
+
             time.sleep(3)
-            
+
             # Botão Salvar
-            self.driver.execute_script("javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOS_FORM','Save')")
-            
+            self.driver.execute_script(
+                "javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOS_FORM','Save')"
+            )
+
             # expandir decisões
             self.driver.execute_script("javascript:;")
-            
+
             # clicar em novo
-            self.driver.execute_script("javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOINSTANCI_GRID','New')")
-            
+            self.driver.execute_script(
+                "javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOINSTANCI_GRID','New')"
+            )
+
+            # mudando para segundo iframe e realizando operações
+            new_iframe = '//*[@id="ModalCommand_modal"]/div/div/div[2]/iframe'
+            WebDriverWait(self.driver, 10).until(
+                EC.frame_to_be_available_and_switch_to_it((By.XPATH, new_iframe))
+            )
+            time.sleep(3)
+
+            WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOINSTANCI_FORM_PageControl_GERAL_GERAL"]/div[1]/div[4]/div/span/div/span[1]/span[1]/span',
+                    )
+                )
+            ).click()
+
+            try:
+                nm_fases = row["NM_FASES"]
+                match = re.match(r"^([^-\s]+)", nm_fases)
+
+                if match:
+                    fase_desejada = match.group(0)
+                    WebDriverWait(self.driver, 20).until(
+                        EC.presence_of_element_located(
+                            (By.XPATH, '//*[@id="ctl00_Body"]/span/span/span[1]/input')
+                        )
+                    ).send_keys(fase_desejada)
+                else:
+                    print("Padrão não encontrado para a linha:", index)
+
+            except Exception as e:
+                print(f"Error ao tentar extrair: {e}")
+
+            time.sleep(2)
+            self.driver.find_element(
+                By.XPATH,
+                '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOINSTANCI_FORM_PageControl_GERAL_GERAL"]/div[1]/div[5]/div/div/label[2]',
+            ).click()
+
+            self.driver.find_element(
+                By.XPATH,
+                '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOINSTANCI_FORM_PageControl_GERAL_GERAL_DATADEFERIMENTO_DATE"]',
+            ).send_keys(str(row["DT_COND"]))
+
+            time.sleep(5)
+
+            self.driver.execute_script(
+                "javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOINSTANCI_FORM','Save')"
+            )
 
     def executar(self):
         while True:
@@ -214,9 +268,8 @@ class AutomacaoSantanderBenner:
                 while i < 10:
                     print(f"Reiniciando em {i}")
                 self.driver.quit()
-                
-            
-                
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     bot = AutomacaoSantanderBenner()
     bot.executar()
