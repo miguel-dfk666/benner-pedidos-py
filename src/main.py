@@ -193,6 +193,10 @@ class AutomacaoSantanderBenner:
             
             # expandir decisões
             self.driver.execute_script("javascript:;")
+            
+            # clicar em novo
+            self.driver.execute_script("javascript:__doPostBack('ctl00$Main$PR_PROCESSOPEDIDOINSTANCI_GRID','New')")
+            
 
     def executar(self):
         while True:
