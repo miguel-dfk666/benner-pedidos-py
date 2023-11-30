@@ -193,3 +193,26 @@ class AutomacaoSantanderBenner:
             
             # expandir decisões
             self.driver.execute_script("javascript:;")
+
+    def executar(self):
+        while True:
+            try:
+                self.conectar_internet()
+                self.logar_santander()
+                self.ir_para_segunda_tela()
+                self.verificar_arquivo_e_fechar_driver()
+                self.pesquisar_processo()
+                break
+            except NoSuchElementException as e:
+                print(f"Error: {e}")
+                time.sleep(10)
+                i = 0
+                while i < 10:
+                    print(f"Reiniciando em {i}")
+                self.driver.quit()
+                
+            
+                
+if __name__ == '__main__':
+    bot = AutomacaoSantanderBenner()
+    bot.executar()
