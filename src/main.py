@@ -109,7 +109,7 @@ class AutomacaoSantanderBenner:
             time.sleep(1)
 
             # Escrever o número da integração no campo de busca
-            processos.send_keys(str(row["Número Integração"]))
+            processos.send_keys(str(row["CD_DOSS_PROC"]))
             self.driver.find_element(
                 By.ID,
                 "ctl00_Main_WIDGETID_635929640475007316_FilterControl_FilterButton",
@@ -150,7 +150,7 @@ class AutomacaoSantanderBenner:
             text_key = self.driver.find_element(
                 By.XPATH, '//*[@id="ctl00_Body"]/span/span/span[1]/input'
             )
-            text_key.send_keys(str(row["Eventos"]))
+            text_key.send_keys("DANOS MORAIS")
 
             opt = self.driver.find_element(
                 By.XPATH,
@@ -162,7 +162,7 @@ class AutomacaoSantanderBenner:
                 By.XPATH,
                 '//*[@id="ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_DATAPEDIDO_DATE"]',
             )
-            data_key.send_keys(str(row["Data Evento"]))
+            data_key.send_keys(str(row["DT_CADR_PROC"]))
 
             # Pedido
             pedido_key = self.driver.find_element(
@@ -184,7 +184,7 @@ class AutomacaoSantanderBenner:
                         '//*[@id="select2-ctl00_Main_PR_PROCESSOPEDIDOS_FORM_PageControl_GERAL_GERAL_ctl146_ctl01_select-results"]/li[3]',
                     )
                 )
-            ).click()
+            ).click() 
             
             time.sleep(3)
             
